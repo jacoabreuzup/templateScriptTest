@@ -1,33 +1,19 @@
-#!/bin/sh
-: '
-/*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-'
+#!/bin/bash
 
-TEMPLATES_DIRECTORY="/Users/$(whoami)/Library/Developer/Xcode/Templates"
+templates_directory="/Users/$(whoami)/Library/Developer/Xcode/Templates"
+latest=$(curl --silent "https://api.github.com/repos/ZupIT/beagle-ios-templates/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
 create_templates() {
-    cd $TEMPLATES_DIRECTORY
-    git clone https://github.com/ZupIT/beagle-ios-templates.git
-    echo "Templates created at $TEMPLATES_DIRECTORY."
+    cd $templates_directory &&
+    curl https://codeload.github.com/ZupIT/beagle-ios-templates/tar.gz/refs/tags/$latest --output beagle-ios-templates.tar.gz &&
+    tar -xf beagle-ios-templates.tar.gz &&
+    echo "Templates created at $templates_directory." &&
+    rm beagle-ios-templates.tar.gz
 }
 
-if [ ! -d $TEMPLATES_DIRECTORY ]
+if [ ! -d $templates_directory ]
 then
-    mkdir $TEMPLATES_DIRECTORY
+    mkdir $templates_directory
     create_templates
 else
     create_templates
